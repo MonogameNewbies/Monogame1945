@@ -1,54 +1,41 @@
-﻿namespace Monogame1945.GameObjects
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Security.Principal;
-    using System.Text;
-    using System.Threading.Tasks;
-    using Microsoft.Xna.Framework;
-    using Microsoft.Xna.Framework.Graphics;
-    using Microsoft.Xna.Framework.Input;
-    using MonoGame.Extended.InputListeners;
-    using MonoGame.Extended.Sprites;
+﻿using System.Collections.Generic;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
+namespace Monogame1945.GameObjects
+{
     public class AirPlane : BaseGameObject
     {
-        KeyboardState state;
-        Vector2 Direction;
-        public Vector2 Position { get { return SpriteObject.Position; } }
-        Viewport viewport;
-        float speed = 400;
+        public Vector2 Position => SpriteObject.Position;
+
+        private KeyboardState state;
+        private Vector2 direction;
+        private readonly float speed = 400;
 
         public AirPlane(Texture2D texture, GraphicsDeviceManager graphics)
             : base(texture)
         {
-            viewport = new Viewport(graphics.GraphicsDevice.Viewport.Bounds);
+            var viewport = new Viewport(graphics.GraphicsDevice.Viewport.Bounds);
             SpriteObject.Position = new Vector2(
-                viewport.Width / 2, viewport.Height - SpriteObject.GetBoundingRectangle().Height / 2);
+                viewport.Width/2f, viewport.Height - SpriteObject.GetBoundingRectangle().Height/2f);
         }
 
         public override void Update(GameTime gameTime)
         {
             state = Keyboard.GetState();
-
             Move(gameTime);
-        }
-
-        public override void Draw(SpriteBatch spriteBatch)
-        {
-            base.Draw(spriteBatch);
         }
 
         Vector2 InputHandler()
         {
             Vector2 tmpDirection = Vector2.Zero;
 
-            Dictionary<Keys, Vector2> KeyMap = new Dictionary<Keys, Vector2>();
-            KeyMap.Add(Keys.Left, new Vector2(-1, 0));
-            KeyMap.Add(Keys.Right, new Vector2(1, 0));
+            Dictionary<Keys, Vector2> keyMap = new Dictionary<Keys, Vector2>();
+            keyMap.Add(Keys.Left, new Vector2(-1, 0));
+            keyMap.Add(Keys.Right, new Vector2(1, 0));
 
-            foreach (var key in KeyMap)
+            foreach (var key in keyMap)
             {
                 if (state.IsKeyDown(key.Key))
                 {
@@ -61,8 +48,8 @@
 
         void Move(GameTime dt)
         {
-            Direction = InputHandler();
-            Vector2 newPosition = Position + ((Direction * (float)dt.ElapsedGameTime.TotalSeconds) * speed);
+            direction = InputHandler();
+            Vector2 newPosition = Position + direction*(float) dt.ElapsedGameTime.TotalSeconds*speed;
 
             SpriteObject.Position = newPosition;
         }
