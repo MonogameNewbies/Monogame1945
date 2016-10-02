@@ -11,14 +11,14 @@ namespace Monogame1945
     /// </summary>
     public class Game1 : Game
     {
-        private readonly GraphicsDeviceManager graphics;
+        private readonly GraphicsDeviceManager graphicsManager;
         private SpriteBatch spriteBatch;
         private GameState CurrentGameState { get; set; }
         private AirPlane plane;
 
         public Game1()
         {
-            graphics = new GraphicsDeviceManager(this);
+            graphicsManager = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
         }
 
@@ -42,7 +42,7 @@ namespace Monogame1945
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            plane = new AirPlane(Content.Load<Texture2D>("player"), graphics);
+            plane = new AirPlane(this, Content.Load<Texture2D>("player"), graphicsManager.GraphicsDevice, spriteBatch);
         }
 
         /// <summary>
@@ -51,7 +51,6 @@ namespace Monogame1945
         /// </summary>
         protected override void UnloadContent()
         {
-            // TODO: Unload any non ContentManager content here
         }
 
         /// <summary>
@@ -63,7 +62,9 @@ namespace Monogame1945
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
                 Keyboard.GetState().IsKeyDown(Keys.Escape))
+            {
                 Exit();
+            }
 
             switch (CurrentGameState)
             {
@@ -89,7 +90,7 @@ namespace Monogame1945
             switch (CurrentGameState)
             {
                 case GameState.IN_GAME:
-                    plane.Draw(spriteBatch);
+                    plane.Draw(gameTime);
                     break;
                 case GameState.SETTINGS:
                     break;
