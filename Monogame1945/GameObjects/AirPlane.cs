@@ -18,7 +18,7 @@ namespace Monogame1945.GameObjects
             : base(game, texture, graphics, batch)
         {
             Sprite.Position = new Vector2(
-                Viewport.Width/2f, Viewport.Height - Sprite.GetBoundingRectangle().Height/2f);
+                Viewport.Width/2f, Viewport.Height - Sprite.GetBoundingRectangle().Height);
 
             keyMap = new Dictionary<Keys, Vector2>();
             keyMap.Add(Keys.Left, new Vector2(-1, 0));
@@ -58,8 +58,8 @@ namespace Monogame1945.GameObjects
             // Translate to newPosition.
             b.Offset(newPosition);
             // Now constrain the movement.
-            if (newPosition.X < Viewport.Bounds.Right && newPosition.X > Viewport.Bounds.Left &&
-                newPosition.Y < Viewport.Bounds.Bottom && newPosition.Y > Viewport.Bounds.Top)
+            if (b.Right < Viewport.Bounds.Right && b.Left > Viewport.Bounds.Left &&
+                b.Bottom < Viewport.Bounds.Bottom && b.Top > Viewport.Bounds.Top)
             {
                 Sprite.Position = newPosition;
             }
