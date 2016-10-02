@@ -7,44 +7,42 @@ namespace Monogame1945.GameObjects
 {
     public class AirPlane : BaseGameObject
     {
-        public Vector2 Position => Sprite.Position;
+        public Vector2 Position => SpriteObject.Position;
 
-        private Dictionary<Keys, Vector2> keyMap;
         private KeyboardState state;
         private Vector2 direction;
         private readonly float speed = 400;
 
-        public AirPlane(Game game, Texture2D texture, GraphicsDevice graphics, SpriteBatch batch)
-            : base(game, texture, graphics, batch)
+        public AirPlane(Texture2D texture, GraphicsDeviceManager graphics)
+            : base(texture)
         {
-            Sprite.Position = new Vector2(
-                Viewport.Width/2f, Viewport.Height - Sprite.GetBoundingRectangle().Height/2f);
-
-            keyMap = new Dictionary<Keys, Vector2>();
-            keyMap.Add(Keys.Left, new Vector2(-1, 0));
-            keyMap.Add(Keys.Right, new Vector2(1, 0));
-            keyMap.Add(Keys.Up, new Vector2(0, -1));
-            keyMap.Add(Keys.Down, new Vector2(0, 1));
+            var viewport = new Viewport(graphics.GraphicsDevice.Viewport.Bounds);
+            SpriteObject.Position = new Vector2(
+                viewport.Width/2f, viewport.Height - SpriteObject.GetBoundingRectangle().Height/2f);
         }
 
-        public override void Update(GameTime gt)
+        public override void Update(GameTime gameTime)
         {
             state = Keyboard.GetState();
-            Move(gt);
+            Move(gameTime);
         }
 
         Vector2 InputHandler()
         {
             Vector2 tmpDirection = Vector2.Zero;
-            // Iterate over pressed keys, not over all mappings regardless of how many keys are currently pressed.
-            foreach (var key in state.GetPressedKeys())
+
+            Dictionary<Keys, Vector2> keyMap = new Dictionary<Keys, Vector2>();
+            keyMap.Add(Keys.Left, new Vector2(-1, 0));
+            keyMap.Add(Keys.Right, new Vector2(1, 0));
+
+            foreach (var key in keyMap)
             {
-                Vector2 v;
-                if (keyMap.TryGetValue(key, out v))
+                if (state.IsKeyDown(key.Key))
                 {
-                    tmpDirection += v;
+                    tmpDirection = key.Value;
                 }
             }
+
             return tmpDirection;
         }
 
@@ -52,24 +50,8 @@ namespace Monogame1945.GameObjects
         {
             direction = InputHandler();
             Vector2 newPosition = Position + direction*(float) dt.ElapsedGameTime.TotalSeconds*speed;
-            var b = Sprite.GetBoundingRectangle();
-            // Translate to {0,0}.
-            b.Offset(-Sprite.Position);
-            // Translate to newPosition.
-            b.Offset(newPosition);
-            // Now constrain the movement.
-            if (newPosition.X < Viewport.Bounds.Right && newPosition.X > Viewport.Bounds.Left &&
-                newPosition.Y < Viewport.Bounds.Bottom && newPosition.Y > Viewport.Bounds.Top)
-            {
-                Sprite.Position = newPosition;
-            }
-        }
 
-        protected override void UnloadContent()
-        {
-            base.UnloadContent();
-            keyMap.Clear();
-            keyMap = null;
+            SpriteObject.Position = newPosition;
         }
     }
 }
