@@ -24,8 +24,9 @@ namespace Monogame1945
 
         private Camera2D camera;
         private GameState CurrentGameState { get; set; }
-        private ParticleEffect particleEffect { get; set; }
+        private ParticleEffect ParticleEffect { get; set; }
         private AirPlane plane;
+        DrawableGameComponent screen;
 
         public Game1()
         {
@@ -61,14 +62,13 @@ namespace Monogame1945
 
             var sprinkleTexture = Content.Load<Texture2D>("sprinkle");
             ParticleInit(new TextureRegion2D(sprinkleTexture));
-
             plane = new AirPlane(Content.Load<Texture2D>("player"), graphicsDeviceManager.GraphicsDevice, spriteBatch,
-                particleEffect);
+                ParticleEffect);
         }
 
         private void ParticleInit(TextureRegion2D textureRegion)
         {
-            particleEffect = new ParticleEffect
+            ParticleEffect = new ParticleEffect
             {
                 Emitters = new[]
                 {
@@ -127,7 +127,7 @@ namespace Monogame1945
             switch (CurrentGameState)
             {
                 case GameState.IN_GAME:
-                    particleEffect.Update((float) gt.ElapsedGameTime.TotalSeconds);
+                    ParticleEffect.Update((float) gt.ElapsedGameTime.TotalSeconds);
                     plane.Update(gt);
                     break;
                 case GameState.SETTINGS:
@@ -142,7 +142,7 @@ namespace Monogame1945
             spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, null,
                 null, null, camera.GetViewMatrix());
             DrawComponents(gt);
-            spriteBatch.Draw(particleEffect);
+            spriteBatch.Draw(ParticleEffect);
             spriteBatch.End();
 
             base.Draw(gt);
