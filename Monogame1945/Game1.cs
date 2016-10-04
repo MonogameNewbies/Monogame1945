@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Monogame1945.Enums;
 using Monogame1945.GameObjects;
+using Monogame1945.Scene;
 
 namespace Monogame1945
 {
@@ -11,14 +12,18 @@ namespace Monogame1945
     /// </summary>
     public class Game1 : Game
     {
-        private readonly GraphicsDeviceManager graphicsManager;
+        public readonly GraphicsDeviceManager graphicsManager;
         private SpriteBatch spriteBatch;
         private GameState CurrentGameState { get; set; }
         private AirPlane plane;
+        DrawableGameComponent gamePlayScreen;
+        DrawableGameComponent screen;
 
         public Game1()
         {
             graphicsManager = new GraphicsDeviceManager(this);
+            graphicsManager.PreferredBackBufferHeight = 760;
+            graphicsManager.PreferredBackBufferWidth = 1020;
             Content.RootDirectory = "Content";
         }
 
@@ -31,6 +36,8 @@ namespace Monogame1945
         protected override void Initialize()
         {
             CurrentGameState = GameState.IN_GAME;
+            gamePlayScreen = new GameplayScene(this);
+           
             base.Initialize();
         }
 
@@ -69,7 +76,13 @@ namespace Monogame1945
             switch (CurrentGameState)
             {
                 case GameState.IN_GAME:
-                    plane.Update(gameTime);
+                    if (!(screen is GameplayScene))
+                    {
+
+                        screen = gamePlayScreen;
+                        Components.Clear();
+                        Components.Add(screen);
+                    }
                     break;
                 case GameState.SETTINGS:
                     break;
@@ -90,7 +103,7 @@ namespace Monogame1945
             switch (CurrentGameState)
             {
                 case GameState.IN_GAME:
-                    plane.Draw(gameTime);
+           
                     break;
                 case GameState.SETTINGS:
                     break;
