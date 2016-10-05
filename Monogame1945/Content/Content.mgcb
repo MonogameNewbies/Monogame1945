@@ -25,6 +25,12 @@
 /processorParam:TextureFormat=Color
 /build:player.png
 
+#begin sprinkle.png
+/processorParam:ResizeToPowerOfTwo=True
+/processorParam:MakeSquare=True
+/processorParam:TextureFormat=DxtCompressed
+/build:sprinkle.png
+
 #begin starBackground.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -48,4 +54,3 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:laserGreen.png
-

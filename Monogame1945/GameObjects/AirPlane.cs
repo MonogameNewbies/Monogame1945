@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using MonoGame.Extended.Particles;
 
 namespace Monogame1945.GameObjects
 {
@@ -9,22 +11,30 @@ namespace Monogame1945.GameObjects
     {
         public Vector2 Position => Sprite.Position;
 
-        private Dictionary<Keys, Vector2> keyMap;
+        private readonly Dictionary<Keys, Vector2> moveMappings = new Dictionary<Keys, Vector2>();
+        private readonly Dictionary<Keys, int> shootMappings = new Dictionary<Keys, int>();
         private KeyboardState state;
         private Vector2 direction;
         private readonly float speed = 400;
+        private readonly ParticleEffect particleEffect;
 
-        public AirPlane(Game game, Texture2D texture, GraphicsDevice graphics, SpriteBatch batch)
-            : base(game, texture, graphics, batch)
+        public AirPlane(Texture2D texture, GraphicsDevice graphics, SpriteBatch batch, ParticleEffect particleEffect)
+            : base(texture, graphics, batch)
         {
+            this.particleEffect = particleEffect;
             Sprite.Position = new Vector2(
                 Viewport.Width/2f, Viewport.Height - Sprite.GetBoundingRectangle().Height);
 
-            keyMap = new Dictionary<Keys, Vector2>();
-            keyMap.Add(Keys.Left, new Vector2(-1, 0));
-            keyMap.Add(Keys.Right, new Vector2(1, 0));
-            keyMap.Add(Keys.Up, new Vector2(0, -1));
-            keyMap.Add(Keys.Down, new Vector2(0, 1));
+            moveMappings.Add(Keys.Left, new Vector2(-1, 0));
+            moveMappings.Add(Keys.Right, new Vector2(1, 0));
+            moveMappings.Add(Keys.Up, new Vector2(0, -1));
+            moveMappings.Add(Keys.Down, new Vector2(0, 1));
+            moveMappings.Add(Keys.A, new Vector2(-1, 0));
+            moveMappings.Add(Keys.D, new Vector2(1, 0));
+            moveMappings.Add(Keys.W, new Vector2(0, -1));
+            moveMappings.Add(Keys.S, new Vector2(0, 1));
+
+            shootMappings.Add(Keys.Space, 0);
         }
 
         public override void Update(GameTime gt)
@@ -40,9 +50,20 @@ namespace Monogame1945.GameObjects
             foreach (var key in state.GetPressedKeys())
             {
                 Vector2 v;
-                if (keyMap.TryGetValue(key, out v))
+                if (moveMappings.TryGetValue(key, out v))
                 {
                     tmpDirection += v;
+                }
+
+                int s;
+                if (shootMappings.TryGetValue(key, out s))
+                {
+                    switch (s)
+                    {
+                        case 0:
+                            particleEffect.Trigger(Sprite.Position - new Vector2(0f, 30f));
+                            break;
+                    }
                 }
             }
             return tmpDirection;
@@ -63,13 +84,6 @@ namespace Monogame1945.GameObjects
             {
                 Sprite.Position = newPosition;
             }
-        }
-
-        protected override void UnloadContent()
-        {
-            base.UnloadContent();
-            keyMap.Clear();
-            keyMap = null;
         }
     }
 }
