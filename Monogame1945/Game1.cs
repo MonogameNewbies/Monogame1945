@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Input;
 using Monogame1945.Enums;
 using Monogame1945.GameObjects;
 using Monogame1945.Scene;
+using MonoGame.Extended.Screens;
 
 namespace Monogame1945
 {
@@ -25,6 +26,12 @@ namespace Monogame1945
             graphicsManager.PreferredBackBufferHeight = 760;
             graphicsManager.PreferredBackBufferWidth = 1020;
             Content.RootDirectory = "Content";
+            IsMouseVisible = true;
+            ScreenComponent screenComponent;
+            Components.Add(screenComponent = new ScreenComponent(this));
+
+            screenComponent.Register(new MainMenuScreen(Services, this));
+            screenComponent.Register(new GameScreen(Services,this));
         }
 
         /// <summary>
@@ -49,7 +56,7 @@ namespace Monogame1945
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            plane = new AirPlane(this, Content.Load<Texture2D>("player"), graphicsManager.GraphicsDevice, spriteBatch);
+           
         }
 
         /// <summary>
@@ -73,20 +80,20 @@ namespace Monogame1945
                 Exit();
             }
 
-            switch (CurrentGameState)
-            {
-                case GameState.IN_GAME:
-                    if (!(screen is GameplayScene))
-                    {
+            //switch (CurrentGameState)
+            //{
+            //    case GameState.IN_GAME:
+            //        if (!(screen is GameplayScene))
+            //        {
 
-                        screen = gamePlayScreen;
-                        Components.Clear();
-                        Components.Add(screen);
-                    }
-                    break;
-                case GameState.SETTINGS:
-                    break;
-            }
+            //            screen = gamePlayScreen;
+            //            Components.Clear();
+            //            Components.Add(screen);
+            //        }
+            //        break;
+            //    case GameState.SETTINGS:
+            //        break;
+            //}
 
             base.Update(gameTime);
         }
@@ -99,16 +106,16 @@ namespace Monogame1945
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            spriteBatch.Begin();
-            switch (CurrentGameState)
-            {
-                case GameState.IN_GAME:
+            //spriteBatch.Begin();
+            //switch (CurrentGameState)
+            //{
+            //    case GameState.IN_GAME:
            
-                    break;
-                case GameState.SETTINGS:
-                    break;
-            }
-            spriteBatch.End();
+            //        break;
+            //    case GameState.SETTINGS:
+            //        break;
+            //}
+            //spriteBatch.End();
 
             base.Draw(gameTime);
         }

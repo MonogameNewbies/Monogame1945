@@ -35,7 +35,7 @@ namespace Monogame1945.Scene
         protected override void LoadContent()
         {
             batch = new SpriteBatch(GraphicsDevice);
-            airplane = new AirPlane(game, Content.Load<Texture2D>("player"), graphicsManager.GraphicsDevice, batch);
+            airplane = new AirPlane(game, Content, graphicsManager.GraphicsDevice, batch);
 
 
             base.LoadContent();
